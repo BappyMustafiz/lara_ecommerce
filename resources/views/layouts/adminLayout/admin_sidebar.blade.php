@@ -9,6 +9,13 @@
         <li><a href="{{url('/admin/view_categories')}}">View Categories</a></li>
       </ul>
     </li>
+    <!--products menu-->
+    <li class="submenu"> <a href="#"><i class="icon icon-th-list"></i> <span>Products</span> <span class="label label-important">2</span></a>
+      <ul>
+        <li><a href="{{url('/admin/add_product')}}">Add Product</a></li>
+        <li><a href="{{url('/admin/view_products')}}">View Products</a></li>
+      </ul>
+    </li>
 
 
 
