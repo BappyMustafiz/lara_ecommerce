@@ -38,6 +38,13 @@ Route::group(['middleware' =>['auth']], function(){
 
 	//products route
 	Route::match(['get','post'],'/admin/add_product','ProductsController@add_product');
+	Route::get('/admin/view_products', 'ProductsController@view_products');
+	Route::match(['get','post'],'/admin/edit_product/{id}','ProductsController@edit_product');
+	Route::get('/admin/delete_product_image/{id}','ProductsController@delete_product_image');
+	Route::get('/admin/delete_product/{id}','ProductsController@delete_product');
+
+	//product attributes
+	Route::match(['get','post'],'/admin/add_attributes/{id}','ProductsController@add_attributes');
 });
 
 Route::get('/logout','AdminController@logout');

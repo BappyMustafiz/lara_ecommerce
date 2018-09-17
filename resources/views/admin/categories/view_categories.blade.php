@@ -41,11 +41,11 @@
                 <tr class="gradeX">
                   <td>{{$category->id}}</td>
                   <td>{{$category->name}}</td>
-                  <td>{{$category->parent_id}}</td>
+                  <td>{{$category->category_level}}</td>
                   <td>{{$category->url}}</td>
                   <td class="center">
                     <a href="{{url('/admin/edit_category/'.$category->id)}}" class="btn btn-primary btn-mini">Edit</a>
-                    <a id="delCat" href="{{url('/admin/delete_category/'.$category->id)}}" class="btn btn-danger btn-mini">Delete</a>
+                    <a rel="{{$category->id}}" rel1="delete_category" <?php /*id="delCat" href="{{url('/admin/delete_category/'.$category->id)}}"*/?> class="btn btn-danger btn-mini deleteRecord">Delete</a>
                   </td>
                 </tr>
 				@endforeach

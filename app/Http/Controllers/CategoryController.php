@@ -25,7 +25,12 @@ class CategoryController extends Controller
     }
 
     public function view_categories(){
+
     	$categories = Category::get();
+        foreach($categories as $key => $val){
+            $category_level = Category::where(['id'=>$val->parent_id])->first();
+            $categories[$key]->category_level = $category_level['name'];
+        }    
     	return view('admin.categories.view_categories')->with(compact('categories'));
     }
 
