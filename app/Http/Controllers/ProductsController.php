@@ -198,6 +198,13 @@ class ProductsController extends Controller
     // products function for frontend
     public function products($url = null){
 
+        // show 404 page if category url not matched
+        $countCategory = Category::where(['url'=>$url])->count();
+        // print_r($countCategory);die();
+        if($countCategory==0){
+            abort(404);
+        }
+
         //get all categories and sub categories (with relations) (recommended)
         $categories = Category::with('categories')->where(['parent_id'=>0])->get();
 
