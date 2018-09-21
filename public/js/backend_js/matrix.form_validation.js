@@ -235,15 +235,16 @@ $(document).ready(function(){
 	});
 
 	// delete product confirmation
-	// $('#delProduct').click(function(){
-	// 	if(confirm('Are you sure to delete this ???')){
-	// 		return true;
-	// 	}
-	// 	return false;
-	// });
+	$('#deleteAttribute').click(function(){
+		if(confirm('Are you sure to delete this ???')){
+			return true;
+		}
+		return false;
+	});
 	
 	// sweetalert 
 	$(document).on('click','.deleteRecord',function(e){
+
 		var id = $(this).attr('rel');
 		var deleteFunction = $(this).attr('rel1');
 		swal({
@@ -261,7 +262,8 @@ $(document).ready(function(){
 			reverseButtons: true
 		},
 		function(){
-			window.location.href=deleteFunction+"/"+id;
+
+			window.location.href = deleteFunction+"/"+id;
 		});
 	});
 

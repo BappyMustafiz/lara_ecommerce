@@ -11,9 +11,16 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+
+// routes for frontend
+// home page
+Route::get('/','IndexController@index');
+// category/listing page
+Route::get('/products/{url}','ProductsController@products');
 
 
 Auth::routes();
@@ -45,6 +52,7 @@ Route::group(['middleware' =>['auth']], function(){
 
 	//product attributes
 	Route::match(['get','post'],'/admin/add_attributes/{id}','ProductsController@add_attributes');
+	Route::get('/admin/delete_attribute/{id}','ProductsController@delete_attribute');
 });
 
 Route::get('/logout','AdminController@logout');

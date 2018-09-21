@@ -165,12 +165,13 @@ class ProductsController extends Controller
 
     // product attribute functions start
     public function add_attributes(Request $request, $id=null){
-        $product_details = Product::where(['id'=>$id])->first();
+        $product_details = Product::with('attributes')->where(['id'=>$id])->first();
+        // $product_details = json_decode(json_encode($product_details));
+            // echo "<pre>";print_r($product_details);die();
 
         // add attributes
         if($request->isMethod('post')){
             $data = $request->all();
-            // echo "<pre>";print_r($data);die();
             foreach($data['sku'] as $key=>$val){
                 if(!empty($val)){
                     $attribute = new ProductsAttribute;
@@ -185,5 +186,35 @@ class ProductsController extends Controller
             return redirect('admin/add_attributes/'.$id)->with('flash_message_success','Product attributes added successfully');
         }    
         return view('admin.products.add_attributes')->with(compact('product_details'));
+    }
+
+    // delete attribute
+    // delete product function
+    public function delete_attribute($id = null){
+        ProductsAttribute::where(['id'=>$id])->delete();
+        return redirect()->back()->with('flash_message_success','Product has been deleted');
+    }
+
+    // products function for frontend
+    public function products($url = null){
+
+        //get all categories and sub categories (with relations) (recommended)
+        $categories = Category::with('categories')->where(['parent_id'=>0])->get();
+
+
+        $category_details = Category::where(['url'=>$url])->first();
+        if($category_details->parent_id==0){
+            // if url is maincategory url
+            $subCategories = Category::where(['parent_id'=>$category_details->id])->get();
+            foreach ($subCategories as $subcat) {
+                $cat_ids[] = $subcat->id;
+            }
+            $all_product = Product::whereIn('category_id',$cat_ids)->get();
+        } else{
+            // if url is subcategory url
+            $all_product = Product::where(['category_id'=>$category_details->id])->get();
+        }
+        
+        return view('products.listing')->with(compact('category_details','all_product','categories'));
     }
 }
