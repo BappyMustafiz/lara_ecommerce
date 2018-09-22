@@ -55,6 +55,12 @@
                   <input type="text" name="url" id="url" value="{{$category_details->url }}">
                 </div>
               </div>
+              <div class="control-group">
+                <label class="control-label">Enable</label>
+                <div class="controls">
+                  <input type="checkbox" name="status" id="status" @if($category_details->status=="1") checked @endif value="1">
+                </div>
+              </div>
               <div class="form-actions">
                 <input type="submit" value="Update Category" class="btn btn-success">
               </div>

@@ -33,6 +33,7 @@
                   <th>Category Name</th>
                   <th>Category Level</th>
                   <th>Category URL</th>
+                  <th>Category status</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -43,6 +44,7 @@
                   <td>{{$category->name}}</td>
                   <td>{{$category->category_level}}</td>
                   <td>{{$category->url}}</td>
+                  <td>{{$category->status=="1" ? 'active' : 'deactive' }}</td>
                   <td class="center">
                     <a href="{{url('/admin/edit_category/'.$category->id)}}" class="btn btn-primary btn-mini">Edit</a>
                     <a rel="{{$category->id}}" rel1="delete_category" <?php /*id="delCat" href="{{url('/admin/delete_category/'.$category->id)}}"*/?> class="btn btn-danger btn-mini deleteRecord">Delete</a>

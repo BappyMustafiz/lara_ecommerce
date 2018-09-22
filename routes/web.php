@@ -19,8 +19,12 @@
 // routes for frontend
 // home page
 Route::get('/','IndexController@index');
+
 // category/listing page
 Route::get('/products/{url}','ProductsController@products');
+
+// product details route
+Route::get('/product/{id}','ProductsController@product');
 
 
 Auth::routes();

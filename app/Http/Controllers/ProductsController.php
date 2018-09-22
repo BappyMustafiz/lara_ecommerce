@@ -114,7 +114,6 @@ class ProductsController extends Controller
         // update product
         if($request->isMethod('post')){
             $data = $request->all();
-            // echo "<pre>";print_r($data);die();
             //upload and update image    
             if($request->hasFile('image')){
                 //check image path
@@ -152,7 +151,32 @@ class ProductsController extends Controller
     }
     // delete product image function
     public function delete_product_image($id = null){
+        // get product image name
+        $productImage = Product::where(['id'=>$id])->first();
+
+        // get image path by image name
+        $large_image_path = 'images/backend_images/products/large/';
+        $medium_image_path = 'images/backend_images/products/medium/';
+        $small_image_path = 'images/backend_images/products/small/';
+
+        //delete large image if not exists in folder
+        if(file_exists($large_image_path.$productImage->image)){
+            unlink($large_image_path.$productImage->image);
+        }
+
+        //delete medium image if not exists in folder
+        if(file_exists($medium_image_path.$productImage->image)){
+            unlink($medium_image_path.$productImage->image);
+        }
+
+        //delete small image if not exists in folder
+        if(file_exists($small_image_path.$productImage->image)){
+            unlink($small_image_path.$productImage->image);
+        }
+
+        //Delete image from product table
         Product::where(['id'=>$id])->update(['image'=>'']);
+
         return redirect()->back()->with('flash_message_success','Product image has been deleted');
     }
 
@@ -199,7 +223,7 @@ class ProductsController extends Controller
     public function products($url = null){
 
         // show 404 page if category url not matched
-        $countCategory = Category::where(['url'=>$url])->count();
+        $countCategory = Category::where(['url'=>$url,'status'=>1])->count();
         // print_r($countCategory);die();
         if($countCategory==0){
             abort(404);
@@ -222,6 +246,15 @@ class ProductsController extends Controller
             $all_product = Product::where(['category_id'=>$category_details->id])->get();
         }
         
-        return view('products.listing')->with(compact('category_details','all_product','categories'));
+        return view('front_products.listing')->with(compact('category_details','all_product','categories'));
+    }
+
+    // single product details function for frontend
+    public function product($id = null){
+        //details for particular id
+        $productDetails = Product::where(['id'=>$id])->first();
+        //get all categories and sub categories (with relations) (recommended)
+        $categories = Category::with('categories')->where(['parent_id'=>0])->get();
+        return view('front_products.product_details')->with(compact('productDetails','categories'));
     }
 }
