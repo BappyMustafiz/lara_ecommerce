@@ -43,7 +43,7 @@
               <div class="control-group">
                 <label class="control-label">Product Code</label>
                 <div class="controls">
-                  <input type="text" name="product_code" id="product_code" value="{{ $product_details->product_name }}">
+                  <input type="text" name="product_code" id="product_code" value="{{ $product_details->product_code }}">
                 </div>
               </div>
               <div class="control-group">
@@ -56,6 +56,12 @@
                 <label class="control-label">Product Description</label>
                 <div class="controls">
                   <textarea type="text" name="product_description" id="product_description">{{ $product_details->product_description }}</textarea>
+                </div>
+              </div>
+              <div class="control-group">
+                <label class="control-label">Material & Care</label>
+                <div class="controls">
+                  <textarea type="text" name="care" id="care">{{ $product_details->care }}</textarea>
                 </div>
               </div>
               <div class="control-group">

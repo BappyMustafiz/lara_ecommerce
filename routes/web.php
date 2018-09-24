@@ -26,6 +26,8 @@ Route::get('/products/{url}','ProductsController@products');
 // product details route
 Route::get('/product/{id}','ProductsController@product');
 
+//get product attribute price (ajax route)
+Route::get('get_product_price','ProductsController@getProductPrice')->name('ajax.getProductPrice');
 
 Auth::routes();
 

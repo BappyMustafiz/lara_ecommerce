@@ -37,5 +37,27 @@
 	<script src="{{asset('js/frontend_js/price-range.js')}}"></script>
     <script src="{{asset('js/frontend_js/jquery.prettyPhoto.js')}}"></script>
     <script src="{{asset('js/frontend_js/main.js')}}"></script>
+    <script type="text/javascript">
+        // script for sizes to change price in frontend
+        $(document).ready(function(){
+            $("#selSize").change(function(){
+                var idSize = $(this).val();
+                if(idSize == ""){
+                    return false;
+                }
+                $.ajax({
+                    type:'get',
+                    url:"{{ route('ajax.getProductPrice') }}",
+                    data:"idSize="+idSize,
+                    success:function(resp){
+                        // alert(resp);
+                        $("#getPrice").html("BDT "+resp);
+                    },error:function(){
+                        alert('Error');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -28,3 +28,6 @@ $(document).ready(function(){
 		});
 	});
 });
+
+
+// script for sizes to change price in frontend

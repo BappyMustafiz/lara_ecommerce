@@ -33,6 +33,11 @@ class ProductsController extends Controller
             } else{
                 $product->product_description = '';
             }
+            if(!empty($data['care'])){
+                $product->care = $data['care'];
+            } else{
+                $product->care = '';
+            }
             $product->price = $data['price'];
 
             //upload image    
@@ -41,7 +46,7 @@ class ProductsController extends Controller
                 $image_tmp = Input::file('image');
                 if($image_tmp->isValid()){
                     $extension = $image_tmp->getClientOriginalExtension();
-                    $filename  = rand(111,999999).'.'.$extension;
+                    $filename  = rand(111,99999).'.'.$extension;
                     $large_image_path = 'images/backend_images/products/large/'.$filename;
                     $medium_image_path = 'images/backend_images/products/medium/'.$filename;
                     $small_image_path = 'images/backend_images/products/small/'.$filename;
@@ -114,13 +119,14 @@ class ProductsController extends Controller
         // update product
         if($request->isMethod('post')){
             $data = $request->all();
+            // echo "<pre>";print_r($data);die();
             //upload and update image    
             if($request->hasFile('image')){
                 //check image path
                 $image_tmp = Input::file('image');
                 if($image_tmp->isValid()){
                     $extension = $image_tmp->getClientOriginalExtension();
-                    $filename  = rand(111,999999).'.'.$extension;
+                    $filename  = rand(111,99999).'.'.$extension;
                     $large_image_path = 'images/backend_images/products/large/'.$filename;
                     $medium_image_path = 'images/backend_images/products/medium/'.$filename;
                     $small_image_path = 'images/backend_images/products/small/'.$filename;
@@ -129,21 +135,21 @@ class ProductsController extends Controller
                     Image::make($image_tmp)->save($large_image_path); 
                     Image::make($image_tmp)->resize(600,600)->save($medium_image_path); 
                     Image::make($image_tmp)->resize(300,300)->save($small_image_path);
-
-                } else{
+                }        
+            } else if(!empty($data['current_image'])){
                     $filename = $data['current_image'];
-                }
-
+            } else {
+                    $filename = '';
             }
 
             if(empty($data['product_description'])){
                 $data['product_description'] = "";
             }
-            if(empty($filename)){
-                $filename = "";
+            if(empty($data['care'])){
+                $data['care'] = "";
             }
-
-            Product::where(['id'=>$id])->update(['category_id'=>$data['category_id'],'product_name'=>$data['product_name'],'product_code'=>$data['product_code'],'product_color'=>$data['product_color'],'product_description'=>$data['product_description'],'price'=>$data['price'],'image'=>$filename]);
+            
+            Product::where(['id'=>$id])->update(['category_id'=>$data['category_id'],'product_name'=>$data['product_name'],'product_code'=>$data['product_code'],'product_color'=>$data['product_color'],'product_description'=>$data['product_description'],'care'=>$data['care'],'price'=>$data['price'],'image'=>$filename]);
             return redirect()->back()->with('flash_message_success','Product updated');
         }
 
@@ -251,10 +257,25 @@ class ProductsController extends Controller
 
     // single product details function for frontend
     public function product($id = null){
-        //details for particular id
-        $productDetails = Product::where(['id'=>$id])->first();
+        //details for particular id with attributes
+        $productDetails = Product::with('attributes')->where(['id'=>$id])->first();
+        
+        $productDetails = json_decode(json_encode($productDetails));
+        // echo "<pre>";print_r($productDetails);die();
+
         //get all categories and sub categories (with relations) (recommended)
         $categories = Category::with('categories')->where(['parent_id'=>0])->get();
         return view('front_products.product_details')->with(compact('productDetails','categories'));
+    }
+
+    // ajax function for get product price on change size
+    public function getProductPrice(Request $request){
+        $data = $request->all();
+        // echo "<pre>";print_r($data);die();
+        $proArr = explode("-", $data['idSize']);
+        // echo $proArr[0]; echo $proArr[1];die();
+        $proAttr = ProductsAttribute::where(['product_id'=>$proArr[0], 'size'=>$proArr[1]])->first();
+        echo $proAttr->price;
+        
     }
 }

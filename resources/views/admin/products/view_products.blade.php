@@ -77,6 +77,7 @@
                     <p>Product Color : {{$product->product_color}}</p>
                     <p>Product Price : {{$product->price}}</p>
                     <p>Product Description : {{$product->product_description}}</p>
+                    <p>Product Description : {{$product->care}}</p>
                   </div>
                 </div>
                 <!-- view product modal -->
