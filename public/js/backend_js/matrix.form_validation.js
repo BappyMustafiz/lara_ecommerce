@@ -238,12 +238,20 @@ $(document).ready(function(){
 		}
 		return false;
 	});
+	// delete alternate image
+	$('#deleteAltImg').click(function(){
+		if(confirm('Are you sure to delete this ???')){
+			return true;
+		}
+		return false;
+	});
 	
 	// sweetalert 
-	$(document).on('click','.deleteRecord',function(e){
+	$(".deleteRecord").click(function(){
 
 		var id = $(this).attr('rel');
 		var deleteFunction = $(this).attr('rel1');
+
 		swal({
 			title: "Are yoy sure?",
 			text: "You will not be able to recover this record again",

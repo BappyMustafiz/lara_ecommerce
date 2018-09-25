@@ -10,6 +10,7 @@ use Session;
 use App\Product;
 use App\Category;
 use App\ProductsAttribute;
+use App\ProductsImage;
 
 class ProductsController extends Controller
 {
@@ -204,6 +205,18 @@ class ProductsController extends Controller
             $data = $request->all();
             foreach($data['sku'] as $key=>$val){
                 if(!empty($val)){
+                    //check sku for preventing to add same
+                    $attCountSku = ProductsAttribute::where('sku',$val)->count();
+                    if($attCountSku>0){
+                        return redirect('admin/add_attributes/'.$id)->with('flash_message_error','"'.$val.'" SKU already exists! Please add another');
+                    }
+
+                    //check size for preventing to add same
+                    $attCountSizes = ProductsAttribute::where(['product_id'=>$id, 'size'=>$data['size'][$key]])->count();
+                    if($attCountSizes>0){
+                        return redirect('admin/add_attributes/'.$id)->with('flash_message_error','"'.$data['size'][$key].'" size already exists! Please add another');
+                    }
+
                     $attribute = new ProductsAttribute;
                     $attribute->product_id = $id;
                     $attribute->sku = $val;
@@ -219,10 +232,73 @@ class ProductsController extends Controller
     }
 
     // delete attribute
-    // delete product function
     public function delete_attribute($id = null){
         ProductsAttribute::where(['id'=>$id])->delete();
         return redirect()->back()->with('flash_message_success','Product has been deleted');
+    }
+
+    // product alternate images functions start
+    public function add_alternate_images(Request $request, $id=null){
+        $product_details = Product::with('attributes')->where(['id'=>$id])->first();
+
+        // add attributes
+        if($request->isMethod('post')){
+            // add alternate images
+            $data = $request->all();
+            if($request->hasFile('image')){
+                $files = $request->file('image');
+                foreach($files as $file){
+                    // Upload images after resize
+                    $image = new ProductsImage;
+                    $extension = $file->getClientOriginalExtension();
+                    $filename = rand(111,99999).'.'.$extension;
+                    $large_image_path = 'images/backend_images/products/large/'.$filename;
+                    $medium_image_path = 'images/backend_images/products/medium/'.$filename;
+                    $small_image_path = 'images/backend_images/products/small/'.$filename;
+                    Image::make($file)->save($large_image_path);
+                    Image::make($file)->resize(600,600)->save($medium_image_path);
+                    Image::make($file)->resize(500,300)->save($small_image_path);
+                    $image->image = $filename;
+                    $image->product_id = $data['product_id'];
+                    $image->save();
+                }
+            }
+            return redirect('admin/add_alternate_images/'.$id)->with('flash_message_success','Product alternate image added successfully');
+        }
+        //show alternate images
+        $productsImages = ProductsImage::where(['product_id'=>$id])->get();    
+        return view('admin.products.add_alternate_images')->with(compact('product_details','productsImages'));
+    }
+
+    // delete attribute
+    public function delete_alternate_image($id = null){
+        // get product image name
+        $productImage = ProductsImage::where(['id'=>$id])->first();
+
+        // get image path by image name
+        $large_image_path = 'images/backend_images/products/large/';
+        $medium_image_path = 'images/backend_images/products/medium/';
+        $small_image_path = 'images/backend_images/products/small/';
+
+        //delete large image if not exists in folder
+        if(file_exists($large_image_path.$productImage->image)){
+            unlink($large_image_path.$productImage->image);
+        }
+
+        //delete medium image if not exists in folder
+        if(file_exists($medium_image_path.$productImage->image)){
+            unlink($medium_image_path.$productImage->image);
+        }
+
+        //delete small image if not exists in folder
+        if(file_exists($small_image_path.$productImage->image)){
+            unlink($small_image_path.$productImage->image);
+        }
+
+        //Delete image from product table
+        ProductsImage::where(['id'=>$id])->delete();
+
+        return redirect()->back()->with('flash_message_success','Product alternate image has been deleted');
     }
 
     // products function for frontend
@@ -258,9 +334,9 @@ class ProductsController extends Controller
     // single product details function for frontend
     public function product($id = null){
         //details for particular id with attributes
-        $productDetails = Product::with('attributes')->where(['id'=>$id])->first();
+        $productDetails = Product::with('attributes')->where('id',$id)->first();
         
-        $productDetails = json_decode(json_encode($productDetails));
+        // $productDetails = json_decode(json_encode($productDetails));
         // echo "<pre>";print_r($productDetails);die();
 
         //get all categories and sub categories (with relations) (recommended)

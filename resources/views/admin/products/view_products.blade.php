@@ -56,10 +56,11 @@
                       @endif
                   </td>
                   <td class="center">
-                    <a href="#myModal{{$product->id}}" data-toggle="modal" class="btn btn-success btn-mini">View</a>
-                    <a href="{{url('/admin/edit_product/'.$product->id)}}" class="btn btn-primary btn-mini">Edit</a>
-                    <a href="{{url('/admin/add_attributes/'.$product->id)}}" class="btn btn-success btn-mini">Add Attributes</a>
-                    <a rel="{{$product->id}}" rel1="delete_product" <?php /*href="{{url('/admin/delete_product/'.$product->id)}}"*/?> href="javascript:" class="btn btn-danger btn-mini deleteRecord">Delete</a>
+                    <a href="#myModal{{$product->id}}" data-toggle="modal" class="btn btn-success btn-mini" title="View Product">View</a>
+                    <a href="{{url('/admin/edit_product/'.$product->id)}}" class="btn btn-primary btn-mini" title="Edit Product">Edit</a>
+                    <a href="{{url('/admin/add_attributes/'.$product->id)}}" class="btn btn-success btn-mini" title="Add Attributes">Add Attributes</a>
+                    <a href="{{url('/admin/add_alternate_images/'.$product->id)}}" class="btn btn-info btn-mini" title="Add Alternate Image">Alternate Image(s)</a>
+                    <a rel="{{$product->id}}" rel1="delete_product" <?php /*href="{{url('/admin/delete_product/'.$product->id)}}"*/?> href="javascript:" class="btn btn-danger btn-mini deleteRecord" title="Delete Product">Delete</a>
                   </td>
                 </tr>
                 <!-- view product modal -->
