@@ -1,73 +1,21 @@
 @extends('layouts.frontLayout.front_design')
 @section('content')
-	<section id="slider"><!--slider-->
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-12">
-						<div id="slider-carousel" class="carousel slide" data-ride="carousel">
-							<ol class="carousel-indicators">
-								<li data-target="#slider-carousel" data-slide-to="0" class="active"></li>
-								<li data-target="#slider-carousel" data-slide-to="1"></li>
-								<li data-target="#slider-carousel" data-slide-to="2"></li>
-							</ol>
-							
-							<div class="carousel-inner">
-								<div class="item active">
-									<div class="col-sm-6">
-										<h1><span>E</span>-SHOPPER</h1>
-										<h2>Free E-Commerce Template</h2>
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-										<button type="button" class="btn btn-default get">Get it now</button>
-									</div>
-									<div class="col-sm-6">
-										<img src="{{asset('images/frontend_images/home/girl1.jpg')}}" class="girl img-responsive" alt="" />
-										<img src="{{asset('images/frontend_images/home/pricing.png')}}"  class="pricing" alt="" />
-									</div>
-								</div>
-								<div class="item">
-									<div class="col-sm-6">
-										<h1><span>E</span>-SHOPPER</h1>
-										<h2>100% Responsive Design</h2>
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-										<button type="button" class="btn btn-default get">Get it now</button>
-									</div>
-									<div class="col-sm-6">
-										<img src="{{asset('images/frontend_images/home/girl2.jpg')}}" class="girl img-responsive" alt="" />
-										<img src="{{asset('images/frontend_images/home/pricing.png')}}"  class="pricing" alt="" />
-									</div>
-								</div>
-								
-								<div class="item">
-									<div class="col-sm-6">
-										<h1><span>E</span>-SHOPPER</h1>
-										<h2>Free Ecommerce Template</h2>
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-										<button type="button" class="btn btn-default get">Get it now</button>
-									</div>
-									<div class="col-sm-6">
-										<img src="{{asset('images/frontend_images/home/girl3.jpg')}}" class="girl img-responsive" alt="" />
-										<img src="{{asset('images/frontend_images/home/pricing.png')}}" class="pricing" alt="" />
-									</div>
-								</div>
-								
-							</div>
-							
-							<a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
-								<i class="fa fa-angle-left"></i>
-							</a>
-							<a href="#slider-carousel" class="right control-carousel hidden-xs" data-slide="next">
-								<i class="fa fa-angle-right"></i>
-							</a>
-						</div>
-						
-					</div>
-				</div>
-			</div>
-	</section><!--/slider-->
 		
 	<section>
 		<div class="container">
+			<div class="breadcrumbs">
+				<ol class="breadcrumb">
+				  <li><a href="{{asset('./')}}">Home</a></li>
+				  <li class="active">Product details</li>
+				</ol>
+			</div>
 			<div class="row">
+				@if(Session::has('flash_message_error'))
+		            <div class="alert alert-error alert-block" style="background-color: #f2dfd0">
+		                <button type="button" class="close" data-dismiss="alert">x</button>
+		                <strong>{!! session('flash_message_error')!!}</strong>
+		            </div>
+	            @endif
 				<div class="col-sm-3">
 					@include('layouts.frontLayout.front_sidebar')
 				</div>
@@ -94,34 +42,44 @@
 							</div>
 						</div>
 						<div class="col-sm-7">
-							<div class="product-information"><!--/product-information-->
-								<img src="{{asset('images/frontend_images/product-details/new.jpg')}}" class="newarrival" alt="" />
-								<h2>{{$productDetails->product_name}}</h2>
-								<p>Code: {{$productDetails->product_code}}</p>
+							<form action="{{url('/cart/add_to_cart')}}" name="addToCartForm" id="addToCartForm">
+								@csrf
+								<!-- hidden fields for cart -->
+								<input type="hidden" name="product_id" value="{{$productDetails->id}}">
+								<input type="hidden" name="product_name" value="{{$productDetails->product_name}}">
+								<input type="hidden" name="product_code" value="{{$productDetails->product_code}}">
+								<input type="hidden" name="product_color" value="{{$productDetails->product_color}}">
+								<input type="hidden" name="product_price" id="productPrice" value="{{$productDetails->price}}">
+								<!-- hidden fields for cart -->
+								<div class="product-information">
+									<img src="{{asset('images/frontend_images/product-details/new.jpg')}}" class="newarrival" alt="" />
+									<h2>{{$productDetails->product_name}}</h2>
+									<p>Code: {{$productDetails->product_code}}</p>
 
-								<p>
-									<select name="size" id="selSize" style="width: 150px;">
-										<option value="">Select</option>
-											@foreach($productDetails->attributes as $sizes)
-												<option value="{{$productDetails->id}}-{{$sizes->size}}">{{$sizes->size}}</option>
-											@endforeach
-									</select>
-								</p>
-								<span>
-									<span id="getPrice">BDT {{$productDetails->price}}</span>
-									<label>Quantity:</label>
-									<input type="text" value="3" />
-									@if($total_stock > 0)
-										<button type="button" class="btn btn-fefault cart" id="cartButton">
-											<i class="fa fa-shopping-cart"></i>
-											Add to cart
-										</button>
-									@endif
-								</span>
-								<p><b>Availability:</b><span id="Availability"> @if($total_stock > 0) In Stock @else Out of Stock @endif</span></p>
-								<p><b>Condition:</b> New</p>
-								<a href=""><img src="{{asset('images/frontend_images/product-details/share.png')}}" class="share img-responsive"  alt="" /></a>
-							</div><!--/product-information-->
+									<p>
+										<select name="size" id="selSize" style="width: 150px;">
+											<option value="">Select size</option>
+												@foreach($productDetails->attributes as $sizes)
+													<option value="{{$productDetails->id}}-{{$sizes->size}}">{{$sizes->size}}</option>
+												@endforeach
+										</select>
+									</p>
+									<span>
+										<span id="getPrice">BDT {{$productDetails->price}}</span>
+										<label>Quantity:</label>
+										<input type="text" name="quantity" value="1" />
+										@if($total_stock > 0)
+											<button type="submit" class="btn btn-fefault cart" id="cartButton">
+												<i class="fa fa-shopping-cart"></i>
+												Add to cart
+											</button>
+										@endif
+									</span>
+									<p><b>Availability:</b><span id="Availability"> @if($total_stock > 0) In Stock @else Out of Stock @endif</span></p>
+									<p><b>Condition:</b> New</p>
+									<a href=""><img src="{{asset('images/frontend_images/product-details/share.png')}}" class="share img-responsive"  alt="" /></a>
+								</div><!--/product-information-->
+							</form>	
 						</div>
 					</div><!--/product-details-->
 					

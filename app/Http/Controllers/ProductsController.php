@@ -11,6 +11,7 @@ use App\Product;
 use App\Category;
 use App\ProductsAttribute;
 use App\ProductsImage;
+use DB;
 
 class ProductsController extends Controller
 {
@@ -24,6 +25,13 @@ class ProductsController extends Controller
             }
             // echo "</pre>";
             // print_r($data);die();
+            // check product enable or disable
+            if(empty($data['status'])){
+                $status = 0;
+            }else{
+                $status = 1;
+            }
+
             $product = new Product;
             $product->category_id = $data['category_id'];
             $product->product_name = $data['product_name'];
@@ -63,7 +71,7 @@ class ProductsController extends Controller
                 }
 
             }
-
+            $product->status = $status;
             $product->save();
             return redirect('/admin/view_products')->with('flash_message_success', 'Product added successfully');
         }
@@ -120,6 +128,12 @@ class ProductsController extends Controller
         // update product
         if($request->isMethod('post')){
             $data = $request->all();
+            // check product enable or disable
+            if(empty($data['status'])){
+                $status = 0;
+            }else{
+                $status = 1;
+            }
             // echo "<pre>";print_r($data);die();
             //upload and update image    
             if($request->hasFile('image')){
@@ -150,7 +164,7 @@ class ProductsController extends Controller
                 $data['care'] = "";
             }
             
-            Product::where(['id'=>$id])->update(['category_id'=>$data['category_id'],'product_name'=>$data['product_name'],'product_code'=>$data['product_code'],'product_color'=>$data['product_color'],'product_description'=>$data['product_description'],'care'=>$data['care'],'price'=>$data['price'],'image'=>$filename]);
+            Product::where(['id'=>$id])->update(['category_id'=>$data['category_id'],'product_name'=>$data['product_name'],'product_code'=>$data['product_code'],'product_color'=>$data['product_color'],'product_description'=>$data['product_description'],'care'=>$data['care'],'price'=>$data['price'],'image'=>$filename,'status'=>$status]);
             return redirect()->back()->with('flash_message_success','Product updated');
         }
 
@@ -333,10 +347,10 @@ class ProductsController extends Controller
             foreach ($subCategories as $subcat) {
                 $cat_ids[] = $subcat->id;
             }
-            $all_product = Product::whereIn('category_id',$cat_ids)->get();
+            $all_product = Product::whereIn('category_id',$cat_ids)->where('status',1)->get();
         } else{
             // if url is subcategory url
-            $all_product = Product::where(['category_id'=>$category_details->id])->get();
+            $all_product = Product::where(['category_id'=>$category_details->id])->where('status',1)->get();
         }
         
         return view('front_products.listing')->with(compact('category_details','all_product','categories'));
@@ -344,6 +358,11 @@ class ProductsController extends Controller
 
     // single product details function for frontend
     public function product($id = null){
+        // show 404 page if product is disabled
+        $productCount = Product::where(['id'=>$id,'status'=>1])->count();
+        if($productCount == 0){
+            abort(404);
+        }
         //details for particular id with attributes
         $productDetails = Product::with('attributes')->where('id',$id)->first();
 
@@ -383,5 +402,65 @@ class ProductsController extends Controller
         echo "#";
         echo $proAttr->stock;
         
+    }
+
+
+    // cart functionality start
+    
+    // add to cart function
+    public function add_to_cart(Request $request){
+        $data = $request->all();
+        // echo "<pre>";print_r($data);die();
+        
+        if(empty($data['user_email'])){
+            $data['user_email'] = "";
+        }
+
+        // session id
+        $session_id = Session::get('session_id');
+        if(empty($session_id)){
+            $session_id = str_random(40);
+            Session::put('session_id',$session_id);
+        }  
+
+        $sizeArr = explode("-", $data['size']);
+
+        // check same product
+        $countProducts = DB::table('cart')->where(['product_id'=>$data['product_id'],'product_color'=>$data['product_color'],'product_size'=>$sizeArr[1],'session_id'=>$session_id])->count();
+
+
+        // insert product details to cart table
+        if($countProducts > 0){
+            return redirect()->back()->with('flash_message_error','Product already exists in cart');
+        } else{
+            DB::table('cart')->insert(['product_id'=>$data['product_id'],'product_name'=>$data['product_name'],'product_code'=>$data['product_code'],'product_color'=>$data['product_color'],'product_price'=>$data['product_price'],'product_size'=>$sizeArr[1],'quantity'=>$data['quantity'],'user_email'=>$data['user_email'],'session_id'=>$session_id]);
+        }    
+        return redirect('/cart/view_cart')->with('flash_message_success','Product has been added in cart');
+    }
+
+    //view cart page
+    public function view_cart(){
+        $session_id = Session::get('session_id');
+        $userCart = DB::table('cart')->where(['session_id'=>$session_id])->get();
+        foreach($userCart as $key=>$product){
+            $productDetails = Product::where('id',$product->product_id)->first();
+            $userCart[$key]->image = $productDetails->image;
+        }
+        // echo "<pre>";print_r($userCart);die();
+        return view('front_products.cart')->with(compact('userCart'));
+    }
+
+
+    //delete cart
+    public function delete_cart($id = null){
+        DB::table('cart')->where('id',$id)->delete();
+        return redirect('/cart/view_cart')->with('flash_message_success','Product has been removed');
+    }
+
+    //update cart quantity from cart page
+    //
+    public function update_cart_quantity($id=null,$quantity=null){
+        DB::table('cart')->where('id',$id)->increment('quantity',$quantity);
+        return redirect('/cart/view_cart')->with('flash_message_success','Product quantity has been updated');
     }
 }

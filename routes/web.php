@@ -26,6 +26,15 @@ Route::get('/products/{url}','ProductsController@products');
 // product details route
 Route::get('/product/{id}','ProductsController@product');
 
+// route for cart
+Route::match(['get','post'],'/cart/add_to_cart','ProductsController@add_to_cart');
+Route::match(['get','post'],'/cart/view_cart','ProductsController@view_cart');
+/*delete product from cart*/
+Route::get('/cart/delete_cart/{id}','ProductsController@delete_cart');
+
+/*update product quantity from cart*/
+Route::get('/cart/update_cart_quantity/{id}/{quantity}','ProductsController@update_cart_quantity');
+
 //get product attribute price (ajax route)
 Route::get('get_product_price','ProductsController@getProductPrice')->name('ajax.getProductPrice');
 

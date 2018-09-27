@@ -10,7 +10,7 @@ class IndexController extends Controller
 {
     public function index(){
     	// in ascending order (by default)
-    	$all_product = Product::get();
+    	$all_product = Product::get()->where('status',1);
 
     	// in descending order 
     	// $all_product = Product::orderBy('id','DESC')->get();

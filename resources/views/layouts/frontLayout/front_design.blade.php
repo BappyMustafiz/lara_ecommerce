@@ -55,6 +55,7 @@
                         // alert(resp);return false;
                         var arr = resp.split('#');
                         $("#getPrice").html("BDT "+arr[0]);
+                        $("#productPrice").val(arr[0]);
                         if(arr[1]==0){
                             $("#cartButton").hide();
                             $("#Availability").text("Out of Stock");
