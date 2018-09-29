@@ -38,6 +38,12 @@ Route::get('/cart/update_cart_quantity/{id}/{quantity}','ProductsController@upda
 //get product attribute price (ajax route)
 Route::get('get_product_price','ProductsController@getProductPrice')->name('ajax.getProductPrice');
 
+/*apply cuppon from cart page*/
+Route::post('/cart/apply-coupon','ProductsController@applyCoupon');
+
+
+
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
@@ -56,7 +62,7 @@ Route::group(['middleware' =>['auth']], function(){
 	Route::match(['get','post'],'/admin/add_category','CategoryController@add_category');
 	Route::get('/admin/view_categories', 'CategoryController@view_categories');
 	Route::match(['get','post'],'/admin/edit_category/{id}','CategoryController@edit_category');
-	Route::match(['get','post'],'/admin/delete_category/{id}','CategoryController@delete_category');
+	Route::get('/admin/delete_category/{id}','CategoryController@delete_category');
 
 	//products route
 	Route::match(['get','post'],'/admin/add_product','ProductsController@add_product');
@@ -71,6 +77,12 @@ Route::group(['middleware' =>['auth']], function(){
 	Route::get('/admin/delete_attribute/{id}','ProductsController@delete_attribute');
 	Route::match(['get','post'],'/admin/add_alternate_images/{id}','ProductsController@add_alternate_images');
 	Route::get('/admin/delete_alternate_image/{id}','ProductsController@delete_alternate_image');
+
+	//coupon routes
+	Route::match(['get','post'],'/admin/add_coupon','CouponsController@add_coupon');
+	Route::get('/admin/view_coupons', 'CouponsController@view_coupons');
+	Route::match(['get','post'],'/admin/edit_coupon/{id}','CouponsController@edit_coupon');
+	Route::get('/admin/delete_coupon/{id}','CouponsController@delete_coupon');
 });
 
 Route::get('/logout','AdminController@logout');

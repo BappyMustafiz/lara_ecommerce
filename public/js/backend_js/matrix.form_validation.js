@@ -224,12 +224,12 @@ $(document).ready(function(){
 	});
 
 	// delete category confirmation
-	$('#delCat').click(function(){
-		if(confirm('Are you sure to delete this ???')){
-			return true;
-		}
-		return false;
-	});
+	// $('#delCat').click(function(){
+	// 	if(confirm('Are you sure to delete this ???')){
+	// 		return true;
+	// 	}
+	// 	return false;
+	// });
 
 	// delete product confirmation
 	$('#deleteAttribute').click(function(){

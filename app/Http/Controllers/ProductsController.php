@@ -11,6 +11,7 @@ use App\Product;
 use App\Category;
 use App\ProductsAttribute;
 use App\ProductsImage;
+use App\Coupon;
 use DB;
 
 class ProductsController extends Controller
@@ -433,7 +434,10 @@ class ProductsController extends Controller
         if($countProducts > 0){
             return redirect()->back()->with('flash_message_error','Product already exists in cart');
         } else{
-            DB::table('cart')->insert(['product_id'=>$data['product_id'],'product_name'=>$data['product_name'],'product_code'=>$data['product_code'],'product_color'=>$data['product_color'],'product_price'=>$data['product_price'],'product_size'=>$sizeArr[1],'quantity'=>$data['quantity'],'user_email'=>$data['user_email'],'session_id'=>$session_id]);
+
+            $getSKU = ProductsAttribute::select('sku')->where(['product_id'=>$data['product_id'],'size'=>$sizeArr[1]])->first();
+
+            DB::table('cart')->insert(['product_id'=>$data['product_id'],'product_name'=>$data['product_name'],'product_code'=>$getSKU->sku,'product_color'=>$data['product_color'],'product_price'=>$data['product_price'],'product_size'=>$sizeArr[1],'quantity'=>$data['quantity'],'user_email'=>$data['user_email'],'session_id'=>$session_id]);
         }    
         return redirect('/cart/view_cart')->with('flash_message_success','Product has been added in cart');
     }
@@ -460,7 +464,30 @@ class ProductsController extends Controller
     //update cart quantity from cart page
     //
     public function update_cart_quantity($id=null,$quantity=null){
-        DB::table('cart')->where('id',$id)->increment('quantity',$quantity);
-        return redirect('/cart/view_cart')->with('flash_message_success','Product quantity has been updated');
+        /*condition for check stock products and user demanded products*/
+        $getCartDetails   = DB::table('cart')->where('id',$id)->first();
+        $getStockProducts = ProductsAttribute::where('sku',$getCartDetails->product_code)->first();
+        $updated_quantity = $getCartDetails->quantity+$quantity;
+
+        if($getStockProducts->stock >=$updated_quantity){
+            DB::table('cart')->where('id',$id)->increment('quantity',$quantity);
+            return redirect('/cart/view_cart')->with('flash_message_success','Product quantity has been updated');
+        }else{
+            return redirect('/cart/view_cart')->with('flash_message_error','Required Product quantity is not available');
+        }
     }
+
+    // method for apply coupon
+    public function applyCoupon(Request $request){
+        $data = $request->all();
+        // echo "<pre>";print_r($data);die();
+        $couponCount = Coupon::where('coupon_code',$data['coupon_code'])->count();
+        if($couponCount == 0){
+            return redirect()->back()->with('flash_message_error','Coupon is not valid');
+        } else{
+            /*perform check like active or inactive, expiry date*/
+            echo "success";die();
+        }
+    }
+
 }
