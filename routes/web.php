@@ -83,6 +83,14 @@ Route::group(['middleware' =>['auth']], function(){
 	Route::get('/admin/view_coupons', 'CouponsController@view_coupons');
 	Route::match(['get','post'],'/admin/edit_coupon/{id}','CouponsController@edit_coupon');
 	Route::get('/admin/delete_coupon/{id}','CouponsController@delete_coupon');
+
+
+	//banner routes
+	Route::match(['get','post'],'/admin/add_banner','BannersController@add_banner');
+	Route::get('/admin/view_banners', 'BannersController@view_banners');
+	Route::match(['get','post'],'/admin/edit_banner/{id}','BannersController@edit_banner');
+	Route::get('/admin/delete_banner_image/{id}','BannersController@delete_banner_image');
+	Route::get('/admin/delete_banner/{id}','BannersController@delete_banner');
 });
 
 Route::get('/logout','AdminController@logout');

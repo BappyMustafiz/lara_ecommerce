@@ -115,6 +115,39 @@ $(document).ready(function(){
 		}
 	});
 
+	//add banner validation
+	// Form Validation
+    $("#add_banner").validate({
+		rules:{
+			title:{
+				required:true
+			},
+			subtitle:{
+				required:true
+			},
+			description:{
+				required:true,
+			},
+			link:{
+				required:true,
+			},
+			image:{
+				required:true,
+			},
+		},
+		errorClass: "help-inline",
+		errorElement: "span",
+		highlight:function(element, errorClass, validClass) {
+			$(element).parents('.control-group').addClass('error');
+		},
+		unhighlight: function(element, errorClass, validClass) {
+			$(element).parents('.control-group').removeClass('error');
+			$(element).parents('.control-group').addClass('success');
+		}
+	});
+
+
+
 	//edit product validation
 	// Form Validation
     $("#edit_product").validate({
@@ -134,6 +167,30 @@ $(document).ready(function(){
 			price:{
 				required:true,
 				number: true
+			}
+		},
+		errorClass: "help-inline",
+		errorElement: "span",
+		highlight:function(element, errorClass, validClass) {
+			$(element).parents('.control-group').addClass('error');
+		},
+		unhighlight: function(element, errorClass, validClass) {
+			$(element).parents('.control-group').removeClass('error');
+			$(element).parents('.control-group').addClass('success');
+		}
+	});
+	//edit product validation
+	// Form Validation
+    $("#edit_banner").validate({
+		rules:{
+			title:{
+				required:true
+			},
+			subtitle:{
+				required:true
+			},
+			link:{
+				required:true,
 			}
 		},
 		errorClass: "help-inline",
