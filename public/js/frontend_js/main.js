@@ -72,7 +72,7 @@ $('.toggle').on('click', function() {
 
 
 // validation for registration form
-$().ready(function(){
+$(document).ready(function(){
 	$('#registerForm').validate({
 		rules:{
 			name:{
@@ -108,4 +108,12 @@ $().ready(function(){
 		}
 
 	});
+
+	// validation for password strength
+	$('#password').passtrength({
+      minChars: 4,
+      passwordToggle: true,
+      tooltip: true,
+      eyeImg : "images/frontend_images/eye.svg"
+    });
 });

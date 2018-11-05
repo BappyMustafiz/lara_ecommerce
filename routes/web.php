@@ -41,11 +41,18 @@ Route::get('get_product_price','ProductsController@getProductPrice')->name('ajax
 /*apply cuppon from cart page*/
 Route::post('/cart/apply-coupon','ProductsController@applyCoupon');
 
-/*route for register or login page*/
-Route::match(['GET','POST'],'/login-register','UsersController@login_register');
+/*route for user register or login page*/
+Route::get('/login-register','UsersController@userLoginRegister');
+
+/*route for user register or login page*/
+Route::post('/user-register','UsersController@register');
 
 /*route for check email */
 Route::match(['GET','POST'],'/check-email','UsersController@check_email');
+
+/*route for user logout*/
+Route::get('/user-logout','UsersController@userLogout');
+
 
 
 Auth::routes();

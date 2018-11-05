@@ -35,7 +35,7 @@
 			                    <strong>{!! session('flash_message_success')!!}</strong>
 			                </div>
 			            @endif
-						<form id="registerForm" name="registerForm" action="{{url('/login-register')}}" method="post">
+						<form id="registerForm" name="registerForm" action="{{url('/user-register')}}" method="post">
 							@csrf
 							<input id="name" name="name" type="text" placeholder="Name"/>
 							<input id="email" name="email" type="email" placeholder="Email Address"/>
