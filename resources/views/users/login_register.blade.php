@@ -6,13 +6,26 @@
 				<div class="col-sm-4 col-sm-offset-1">
 					<div class="login-form"><!--login form-->
 						<h2>Login to your account</h2>
-						<form action="#">
-							<input type="text" placeholder="Name" />
-							<input type="email" placeholder="Email Address" />
-							<span>
+						@if(Session::has('flash_message_login_error'))
+			            <div class="alert alert-error alert-block" style="color: red; background: #d4a28b;">
+			                <button type="button" class="close" data-dismiss="alert">x</button>
+			                <strong>{!! session('flash_message_login_error')!!}</strong>
+			            </div>
+			            @endif
+			            @if(Session::has('flash_message_success'))
+			                <div class="alert alert-success alert-block">
+			                    <button type="button" class="close" data-dismiss="alert">x</button>
+			                    <strong>{!! session('flash_message_success')!!}</strong>
+			                </div>
+			            @endif
+						<form id="loginForm" name="loginForm" action="{{url('/user-login')}}" method="post">
+							@csrf
+							<input type="email" name="email" placeholder="Email Address" />
+							<input type="password" name="password" placeholder="Password" />
+							<!-- <span>
 								<input type="checkbox" class="checkbox"> 
 								Keep me signed in
-							</span>
+							</span> -->
 							<button type="submit" class="btn btn-default">Login</button>
 						</form>
 					</div><!--/login form-->

@@ -109,6 +109,29 @@ $(document).ready(function(){
 
 	});
 
+	// validation for login
+	$('#loginForm').validate({
+		rules:{
+			email:{
+				required:true,
+				email:true
+			},
+			password:{
+				required:true
+			}
+		},
+		messages:{
+			email:{
+				required:"Please enter your Email",
+				email:"Please enter valid Email"
+			},
+			password:{
+				required:"Please provide your password",
+			}
+		}
+
+	});
+
 	// validation for password strength
 	$('#password').passtrength({
       minChars: 4,

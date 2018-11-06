@@ -53,6 +53,16 @@ Route::match(['GET','POST'],'/check-email','UsersController@check_email');
 /*route for user logout*/
 Route::get('/user-logout','UsersController@userLogout');
 
+/*route for user login*/
+Route::post('/user-login','UsersController@userLogin');
+
+/*middleware frontlogin*/
+Route::group(['middleware'=>['frontlogin']],function(){
+	/*route for account page */
+	Route::match(['GET','POST'],'account','UsersController@userAccount');
+});
+
+
 
 
 Auth::routes();

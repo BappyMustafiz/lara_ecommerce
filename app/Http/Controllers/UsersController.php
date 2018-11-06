@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Session;
 use App\User;
+use App\Country;
 use Auth;
+use Session;
 
 class UsersController extends Controller
 {
@@ -30,6 +31,7 @@ class UsersController extends Controller
     			$user->password = bcrypt($data['password']);
     			$user->save();
     			if (Auth::attempt(['email'=>$data['email'],'password'=>$data['password']])) {
+    				Session::put('frontSession',$data['email']);
     				return redirect('/cart/view_cart');
     			}
     		}
@@ -51,6 +53,29 @@ class UsersController extends Controller
     /*user log out*/
     public function userLogout(){
     	Auth::logout();
+    	Session::forget('frontSession');
     	return redirect('/');
+    }
+
+
+    /*user login function*/
+    public function userLogin(Request $request){
+    	if($request->isMethod('post')){
+    		$data = $request->all();
+    		if(Auth::attempt(['email'=>$data['email'],'password'=>$data['password']])){
+    			Session::put('frontSession',$data['email']);
+    			return redirect('/cart/view_cart');
+    		}else{
+    			return redirect()->back()->with('flash_message_login_error','Please enter valid E-mail or Password');
+    		}
+    	}
+    }
+
+    /*user account function*/
+    public function userAccount(){
+    	$user_id = Auth::user()->id;
+    	$userDetails = User::find($user_id);
+    	$countries = Country::get();
+    	return view('users.account')->with(compact('countries','userDetails'));
     }
 }
